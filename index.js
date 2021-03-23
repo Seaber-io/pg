@@ -17,13 +17,13 @@ var PgDriver = Base.extend({
 
   startMigration: function (cb) {
     if (!this.internals.notransactions) {
-      return this.runSql('BEGIN;').nodeify(cb);
+      return this.runSql('BEGIN;SET session_replication_role = replica;').nodeify(cb);
     } else return Promise.resolve().nodeify(cb);
   },
 
   endMigration: function (cb) {
     if (!this.internals.notransactions) {
-      return this.runSql('COMMIT;').nodeify(cb);
+      return this.runSql('COMMIT;SET session_replication_role = DEFAULT;').nodeify(cb);
     } else return Promise.resolve(null).nodeify(cb);
   },
 
